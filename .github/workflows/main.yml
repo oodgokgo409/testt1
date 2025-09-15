@@ -1,0 +1,106 @@
+name: 🚀 Epic Python CI - "Massy" Blaster 🐍✨
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  push:
+    branches: [ master ]
+  pull_request:
+    branches:
+  workflow_dispatch:
+    branches:
+
+jobs:
+  build:
+    env:
+      PY_COLORS: "1"
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        os: [ubuntu-latest]
+        python-version: ["3.13"]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: 🏁 Checkout Code Like a Boss
+      uses: actions/checkout@v4
+
+    - name: 🐍 Setup Python ${{ matrix.python-version }} (The Bleeding Edge)
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: 🌎 Set Locale for Ultimate Compatibility
+      run: |
+        sudo apt-get install tzdata locales -y
+        sudo locale-gen en_US.UTF-8
+        sudo localectl set-locale LANG="en_US.UTF-8"
+        export LANG="en_US.UTF-8"
+        sudo update-locale
+        echo "Available locales:"
+        locale -a
+        echo "Current locale:"
+        locale
+        locale -c -k LC_NUMERIC
+        localectl status
+
+    - name: 📦 Install Dependencies Like a Pro
+      run: |
+        python -m pip install --upgrade pip
+        pip install --upgrade pip wheel seleniumbase pyautogui pymongo python-xlib
+
+    - name: 🎩 Lint with Flake8 for Code Swag
+      run: |
+        pip install flake8
+        # Optional: Uncomment to enforce style!
+        # flake8 . --count --show-source --statistics --exclude=temp
+
+    - name: 🦾 Install Chrome (if on specific Ubuntu)
+      if: matrix.os == 'ubuntu-20.04'
+      run: |
+        sudo apt install google-chrome-stable
+
+    - name: 🕹️ Console Scripts Interface Check (Seleniumbase Power!)
+      run: |
+        seleniumbase
+        sbase
+
+    - name: 🤖 Install Chromedriver (Automated Browsing FTW)
+      run: |
+        seleniumbase install chromedriver
+
+    - name: 🛡️ Install Cloudflare WARP (Surf Secure, Surf Fast)
+      run: |
+        sudo apt update
+        sudo apt install -y curl
+        curl https://pkg.cloudflareclient.com/pubkey.gpg | sudo gpg --dearmor -o /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
+        echo "deb [signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/cloudflare-client.list
+        sudo apt update
+        sudo apt install -y cloudflare-warp
+        sudo warp-cli --accept-tos registration new
+        sudo warp-cli --accept-tos connect
+        sleep 5
+        sudo warp-cli --accept-tos status
+
+    - name: 🏃‍♂️ Run Massy.py in Debug Mode with Style
+      run: |
+        python massy.py --debug --chrome --xvfb --screenshot
+
+    - name: 🖼️ Upload Screenshots (Show Off Your Test Run!)
+      uses: actions/upload-artifact@v4
+      with:
+        name: seleniumbase-screenshots
+        path: |
+          ./latest_logs/
+
+    - name: 🎉 Drop a Fun Fact
+      run: |
+        echo "✨ CI ran at $(date) on ${{ runner.os }} with Python ${{ matrix.python-version }}! 🚀"
+        echo "Go be awesome, coder! 😎"
+
+    - name: 📢 Notify the World (Optional, for Real Fans)
+      if: always()
+      run: |
+        echo "Hey! The workflow finished. Drop a tweet or a Discord message if you're impressed! #Python #GithubActions"
