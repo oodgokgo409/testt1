@@ -119,7 +119,7 @@ with SB(uc=True, test=True,locale=f"{language_code.upper()}") as eyyetete:
             eyyetete.sleep(10)
             if sfauiojt2.is_element_present('button:contains("Accept")'):
                 sfauiojt2.uc_click('button:contains("Accept")', reconnect_time=4)
-            while eyyetete.is_element_visible(input_field):
+            while is_stream_online("s3jl"):
                 eyyetete.sleep(10)
             eyyetete.quit_extra_driver()
     eyyetete.sleep(1)
